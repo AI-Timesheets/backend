@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix("backend-auth")->group(function() {
+    Route::get("self", "BackendAuth@self")->middleware("auth.backend");
+    Route::post("register", "BackendAuth@register");
+    Route::post("login", "BackendAuth@login");
 });
