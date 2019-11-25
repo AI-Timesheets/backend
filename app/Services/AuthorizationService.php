@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Controllers\BackendAuth;
 use App\User;
+use App\UserRecovery;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
@@ -12,8 +13,11 @@ use \Illuminate\Http\Request;
 
 class AuthorizationService {
 
+    // A month
     const EXPIRATION_TIME = 3600 * 24 * 30;
-    const REFRESH_REQUIREMENT_TIME = 60 * 5;
+
+    // An hour
+    const RECOVERY_EXPIRATION_TIME = 60 * 30;
 
     private static function getJWT($payload, $uid): string {
         $factory = JWTFactory::customClaims([
@@ -116,6 +120,45 @@ class AuthorizationService {
 
         \Log::info($user->password);
 
+        return $user;
+    }
+
+    public static function createUserRecoveryToken($email) {
+        if (!$user = User::where("email", $email)->first()) {
+            throw new \Exception("User does not exist");
+        }
+
+        $userRecovery = new UserRecovery();
+
+        $userRecovery->user_id = $user->id;
+        $userRecovery->expires_at = date("Y-m-d H:i:s", time() + self::RECOVERY_EXPIRATION_TIME);
+
+        $key = \Str::random(32);
+
+        while (UserRecovery::where("recovery_key", $key)->exists()) {
+            \Log::info($key);
+            $key = \Str::random(32);
+        }
+
+        $userRecovery->recovery_key = $key;
+
+        $userRecovery->save();
+
+        return $userRecovery;
+    }
+
+    public static function validateUserRecoveryKey($key): User {
+        \Log::info(date("Y-m-d H:i:s", time()));
+        if (!$recovery = UserRecovery::where("recovery_key", $key)->where("expires_at", ">", date("Y-m-d H:i:s", time()))->first()) {
+            throw new \Exception("Invalid recovery key");
+        }
+
+        return $recovery->user;
+    }
+
+    public static function changeUserPassword(User $user, $newPassword): User {
+        $user->password = Hash::make($newPassword);
+        $user->save();
         return $user;
     }
 }

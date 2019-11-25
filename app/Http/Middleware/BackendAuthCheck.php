@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Services\AuthorizationService;
 use Closure;
+use App\User;
 
 class BackendAuthCheck
 {
@@ -18,7 +19,7 @@ class BackendAuthCheck
     {
         $payload = AuthorizationService::authenticateHeader($request);
 
-        $user = $payload["user"];
+        $user = User::where("id", $payload["user"]->id)->first();
 
         $request->merge(['user' => $user]);
 
