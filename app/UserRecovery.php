@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class UserRecovery
  * @package App
@@ -13,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $expires_at;
  * @property \App\User $user;
  */
-class UserRecovery extends Model {
+class UserRecovery extends BaseModel {
     protected $fillable = [
         'user_id',
         'expires_at',

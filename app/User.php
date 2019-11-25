@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class User
  * @package App
@@ -13,8 +11,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $username
  * @property string $email
  * @property string $password
+ * @property \App\Company[] $companies;
  */
-class User extends Model
+class User extends BaseModel
 {
     protected $fillable = [
         'first_name',
@@ -26,5 +25,9 @@ class User extends Model
     protected $hidden = [
         'password',
     ];
+
+    public function companies() {
+        return $this->hasMany("\App\Company", "owner_user_id");
+    }
 
 }

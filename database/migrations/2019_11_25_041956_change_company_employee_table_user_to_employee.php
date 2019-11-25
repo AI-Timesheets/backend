@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class ChangeCompanyEmployeeTableUserToEmployee extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('clock_in_logs', function (Blueprint $table) {
+            $table->dropColumn("user_id");
+            $table->string("company_employee_id");
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('clock_in_log', function (Blueprint $table) {
+            //
+        });
+    }
+}
