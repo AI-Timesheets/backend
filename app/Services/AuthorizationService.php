@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\Random;
 use App\Http\Controllers\BackendAuth;
+use App\Repositories\UserRepository;
 use App\User;
 use App\UserRecovery;
 use Illuminate\Support\Facades\Hash;
@@ -132,15 +134,7 @@ class AuthorizationService {
 
         $userRecovery->user_id = $user->id;
         $userRecovery->expires_at = date("Y-m-d H:i:s", time() + self::RECOVERY_EXPIRATION_TIME);
-
-        $key = \Str::random(32);
-
-        while (UserRecovery::where("recovery_key", $key)->exists()) {
-            \Log::info($key);
-            $key = \Str::random(32);
-        }
-
-        $userRecovery->recovery_key = $key;
+        $userRecovery->recovery_key = Random::stringWhereNot(32, function($key) { UserRepository::where("recovery_key",$key)->exists();});
 
         $userRecovery->save();
 

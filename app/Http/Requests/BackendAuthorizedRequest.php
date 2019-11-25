@@ -5,12 +5,12 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class ChangePasswordRequest
+ * Class BackendAuthorizedRequest
  * @package App\Http\Requests
  *
- * @property string $password;
+ * @property \App\User $user;
  */
-class ChangePasswordRequest extends BackendAuthorizedRequest
+class BackendAuthorizedRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,7 +19,11 @@ class ChangePasswordRequest extends BackendAuthorizedRequest
      */
     public function authorize()
     {
-        return true;
+        if ($this->user) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -30,7 +34,7 @@ class ChangePasswordRequest extends BackendAuthorizedRequest
     public function rules()
     {
         return [
-            'password' => 'required|min:8',
+            //
         ];
     }
 }
