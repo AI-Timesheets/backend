@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
  * Class SignupRequest
  * @package App\Http\Requests
@@ -14,7 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string $username;
  * @property string $password;
  */
-class SignupRequest extends FormRequest
+class SignupRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

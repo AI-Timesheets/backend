@@ -2,15 +2,13 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
  * Class BackendAuthorizedRequest
  * @package App\Http\Requests
  *
  * @property \App\User $user;
  */
-class BackendAuthorizedRequest extends FormRequest
+class BackendAuthorizedRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
- * Class ChangePasswordRequest
+ * Class CreateLocationRequest
  * @package App\Http\Requests
  *
- * @property string $password;
+ * @property string $name;
+ * @property int $companyId;
  */
-class ChangePasswordRequest extends BackendAuthorizedRequest
+class CreateLocationRequest extends BackendAuthorizedRequest
 {
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -20,7 +20,8 @@ class ChangePasswordRequest extends BackendAuthorizedRequest
     public function rules()
     {
         return [
-            'password' => 'required|min:8',
+            'name' => 'required',
+            'companyId' => 'required|integer',
         ];
     }
 }

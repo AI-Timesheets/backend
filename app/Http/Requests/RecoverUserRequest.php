@@ -2,15 +2,13 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
  * Class RecoverUserRequest
  * @package App\Http\Requests
  *
  * @property string $email
  */
-class RecoverUserRequest extends FormRequest
+class RecoverUserRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

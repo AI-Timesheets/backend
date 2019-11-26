@@ -17,16 +17,24 @@ class BackendAuthCheck
      */
     public function handle($request, Closure $next)
     {
-        $payload = AuthorizationService::authenticateHeader($request);
+        try {
+            $payload = AuthorizationService::authenticateHeader($request);
 
-        $user = User::where("id", $payload["user"]->id)->first();
+            if (!$payload) {
+                throw new Exception("Failed to authorize token");
+            }
 
-        $request->merge(['user' => $user]);
+            $user = User::where("id", $payload->toArray()[0]->user->id)->first();
 
-        $request->setUserResolver(function() use ($user) {
-            return $user;
-        });
+            $request->merge(['user' => $user]);
 
-        return $next($request);
+            $request->setUserResolver(function () use ($user) {
+                return $user;
+            });
+
+            return $next($request);
+        } catch (\Exception $e) {
+            abort(403, $e->getMessage());
+        }
     }
 }
