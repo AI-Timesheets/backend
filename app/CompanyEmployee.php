@@ -13,6 +13,7 @@ namespace App;
  * @property double $hourly_wage;
  * @property int $location_id;
  * @property int $photo_id;
+ * @property \App\Company $company;
  * @property \App\Location $location;
  * @property \App\Photo $photo;
  * @property \App\ClockInLog[] $clockInLogs;
@@ -27,6 +28,10 @@ class CompanyEmployee extends BaseModel {
         'location_id',
         'photo_id',
     ];
+
+    public function company() {
+        return $this->belongsTo("\App\Company");
+    }
 
     public function location() {
         return $this->belongsTo("\App\Location");

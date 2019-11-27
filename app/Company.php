@@ -11,6 +11,7 @@ namespace App;
  * @property int $owner_user_id;
  * @property \App\User $owner;
  * @property \App\Location[] $locations;
+ * @property \App\CompanyEmployee[] $employees;
  */
 class Company extends BaseModel {
     protected $fillable = [
@@ -25,5 +26,17 @@ class Company extends BaseModel {
 
     public function locations() {
         return $this->hasMany("\App\Location");
+    }
+
+    public function employees() {
+        return $this->hasMany("\App\CompanyEmployee");
+    }
+
+    public function hasLocation($locationId) {
+        return Location::where("id", $locationId)->where("company_id", $this->id)->exists();
+    }
+
+    public function hasEmployee($employeeId) {
+        return CompanyEmployee::where("id", $employeeId)->where("company_id", $this->id)->exists();
     }
 }

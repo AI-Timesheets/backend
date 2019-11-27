@@ -21,7 +21,6 @@ class CreateLocationRequest extends BackendAuthorizedRequest
     {
         return [
             'name' => 'required',
-            'companyId' => 'required|integer',
         ];
     }
 }

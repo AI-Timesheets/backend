@@ -30,4 +30,8 @@ class User extends BaseModel
         return $this->hasMany("\App\Company", "owner_user_id");
     }
 
+    public function isOwnerOf(Company $company) {
+        return $this->id === $company->owner_user_id;
+    }
+
 }

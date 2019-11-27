@@ -6,6 +6,7 @@ use App\Company;
 use App\CompanyEmployee;
 use App\Helpers\Random;
 use App\Location;
+use App\Repositories\CompanyEmployeeRepository;
 use App\Repositories\CompanyRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\UserRepository;
@@ -13,37 +14,27 @@ use App\User;
 
 class CompanyService {
     public static function getUserCompanies(User $user) {
-        $repo = new UserRepository();
-        return $repo->getOne($user->id)->companies;
+        return Company::where("owner_user_id", $user->id)->get();
     }
 
-    public static function getCompany($companyId) {
-        $repo = new CompanyRepository();
-        return $repo->getOne($companyId);
+    public static function getCompany($companyId): Company {
+        return Company::where("id", $companyId)->firstOrFail();
     }
 
     public static function getCompanyLocations($companyId) {
-        return CompanyService::getCompany($companyId)->locations;
+        return Location::where("company_id", $companyId)->get();
     }
 
-    public static function getCompanyLocation($companyId, $locationId) {
-        $location = Location::where("id", $locationId)->where("company_id", $companyId)->first();
-        if (!$location) {
-            throw new \Exception("Company Location does not exist");
-        }
-        return $location;
-    }
-
-    public static function getCompanyEmployee($companyId, $employeeId) {
-        $employee = CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->first();
-        if (!$employee) {
-            throw new \Exception("Company Employee does not exist");
-        }
-        return $employee;
+    public static function getCompanyLocation($companyId, $locationId): Location {
+        return Location::where("id", $locationId)->where("company_id", $companyId)->firstOrFail();
     }
 
     public static function getCompanyEmployees($companyId) {
-        return CompanyService::getCompany($companyId)->employees;
+        return CompanyEmployee::where("company_id", $companyId)->get();
+    }
+
+    public static function getCompanyEmployee($companyId, $employeeId) {
+        return CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->firstOrFail();
     }
 
     public static function createCompany(User $user, $name) {
