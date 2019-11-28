@@ -18,7 +18,11 @@ class CompanyService {
     }
 
     public static function getCompany($companyId): Company {
-        return Company::where("id", $companyId)->firstOrFail();
+        $company = Company::where("id", $companyId)->first();
+        if (!$company) {
+            throw new \Exception("Company does not exist");
+        }
+        return $company;
     }
 
     public static function getCompanyLocations($companyId) {
@@ -26,7 +30,11 @@ class CompanyService {
     }
 
     public static function getCompanyLocation($companyId, $locationId): Location {
-        return Location::where("id", $locationId)->where("company_id", $companyId)->firstOrFail();
+        $location = Location::where("id", $locationId)->where("company_id", $companyId)->first();
+        if (!$location) {
+            throw new \Exception("Location does not exist");
+        }
+        return $location;
     }
 
     public static function getCompanyEmployees($companyId) {
@@ -34,7 +42,11 @@ class CompanyService {
     }
 
     public static function getCompanyEmployee($companyId, $employeeId) {
-        return CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->firstOrFail();
+        $employee = CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->first();
+        if (!$employee) {
+            throw new \Exception("Employee does not exist");
+        }
+        return $employee;
     }
 
     public static function createCompany(User $user, $name) {
@@ -68,20 +80,54 @@ class CompanyService {
         return $location;
     }
 
-    public static function createCompanyEmployee(Location $location, $firstName, $lastName, $hourlyWage) {
+    public static function createCompanyEmployee($locationId, $firstName, $lastName, $hourlyWage, $isAdmin, $loginCode) {
+
+        $location = Location::where("id", $locationId)->with("company")->first();
+
+        if (!$location) {
+            throw new \Exception("Location does not exist");
+        }
+
+       if (CompanyEmployee::where("company_id", $location->company->id)->where("login_code", $loginCode)->exists()) {
+           throw new \Exception("Existing employee already has this login code");
+       }
+
         $employee = new CompanyEmployee();
-        $employee->location_id = $location->id;
+        $employee->company_id = $location->company_id;
+        $employee->location_id = $locationId;
         $employee->first_name = $firstName;
         $employee->last_name = $lastName;
         $employee->hourly_wage = $hourlyWage;
+        $employee->is_admin = $isAdmin;
+        $employee->login_code = $loginCode;
         $employee->save();
         return $employee;
     }
 
-    public static function updateCompanyEmployee(CompanyEmployee $employee, $firstName, $lastName, $hourlyWage) {
+    public static function updateCompanyEmployee($employeeId, $locationId, $firstName, $lastName, $hourlyWage, $isAdmin, $loginCode) {
+
+        $employee = CompanyEmployee::where("id", $employeeId)->with("company")->first();
+
+        $location = Location::where("id", $locationId)->first();
+
+        if (!$location) {
+            throw new \Exception("Location does not exist");
+        }
+
+        if (!$employee) {
+            throw new \Exception("Employee does not exist");
+        }
+
+        if (CompanyEmployee::where("company_id", $employee->company->id)->where("login_code", $loginCode)->where("id", "<>", $employeeId)->exists()) {
+            throw new \Exception("Existing employee already has this login code");
+        }
+
+        $employee->location_id = $location->id;
         $employee->first_name = $firstName;
         $employee->last_name = $lastName;
         $employee->hourly_wage = $hourlyWage;
+        $employee->is_admin = $isAdmin;
+        $employee->login_code = $loginCode;
         $employee->save();
         return $employee;
     }

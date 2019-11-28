@@ -35,4 +35,10 @@ Route::prefix("company")->group(function() {
     Route::get("/{id}/location/{locationId}", "CompanyController@location")->middleware("auth.backend");
     Route::put("/{id}/location/{locationId}", "CompanyController@updateLocation")->middleware("auth.backend");
     Route::delete("/{id}/location/{locationId}", "CompanyController@deleteLocation")->middleware("auth.backend");
+
+    Route::get("/{id}/employee", "CompanyController@employees")->middleware("auth.backend");
+    Route::post("/{id}/employee", "CompanyController@createEmployee")->middleware("auth.backend");
+    Route::get("/{id}/employee/{employeeId}", "CompanyController@employee")->middleware("auth.backend");
+    Route::put("/{id}/employee/{employeeId}", "CompanyController@updateEmployee")->middleware("auth.backend");
+    Route::delete("/{id}/employee/{employeeId}", "CompanyController@deleteEmployee")->middleware("auth.backend");
 });

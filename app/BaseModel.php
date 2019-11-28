@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class BaseModel
@@ -14,5 +15,5 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $deleted_at;
  */
 class BaseModel extends Model {
-
+    use SoftDeletes;
 }

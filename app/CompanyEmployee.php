@@ -11,6 +11,7 @@ namespace App;
  * @property bool $is_admin;
  * @property int $login_code;
  * @property double $hourly_wage;
+ * @property int $company_id;
  * @property int $location_id;
  * @property int $photo_id;
  * @property \App\Company $company;
@@ -25,6 +26,7 @@ class CompanyEmployee extends BaseModel {
         'is_admin',
         'login_code',
         'hourly_wage',
+        'company_id',
         'location_id',
         'photo_id',
     ];

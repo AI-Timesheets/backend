@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 /**
  * Class CreateCompanyEmployeeRequest
  * @package App\Http\Requests
@@ -11,9 +9,11 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string $firstName;
  * @property string $lastName;
  * @property double $hourlyWage;
- * @property inte $locationId;
+ * @property int $locationId;
+ * @property bool $isAdmin;
+ * @property int $loginCode;
  */
-class CreateCompanyEmployeeRequest extends FormRequest
+class CreateCompanyEmployeeRequest extends BackendAuthorizedRequest
 {
     public function rules()
     {
@@ -23,7 +23,7 @@ class CreateCompanyEmployeeRequest extends FormRequest
             'hourlyWage' => 'required|numeric',
             'locationId' => 'required|integer',
             'isAdmin' => 'required|boolean',
-            'loginCode' => 'required|integer',
+            'loginCode' => 'required|digits:4',
         ];
     }
 }

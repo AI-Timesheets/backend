@@ -17,6 +17,10 @@ class CompanyController extends Controller {
 
             $company = Company::find($companyId);
 
+            if (!$company) {
+                throw new \Exception("Company does not exist");
+            }
+
             if (!$request->user->isOwnerOf($company)) {
                 throw new \Exception("User is not owner of company");
             }
@@ -53,7 +57,7 @@ class CompanyController extends Controller {
     public function deleteCompany(BackendAuthorizedRequest $request, $id) {
         return $this->handleIfOwner($request, $id, function() use ($request, $id) {
             $company = CompanyService::getCompany($id);
-            $company->softDelete();
+            $company->delete();
         });
     }
 
@@ -85,7 +89,51 @@ class CompanyController extends Controller {
     public function deleteLocation(BackendAuthorizedRequest $request, $companyId, $id) {
         return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $id) {
             $location = CompanyService::getCompanyLocation($companyId, $id);
-            $location->softDelete();
+            $location->delete();
+        });
+    }
+
+    public function employee(BackendAuthorizedRequest $request, $companyId, $id) {
+        return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $id) {
+            return CompanyService::getCompanyEmployee($companyId, $id);
+        });
+    }
+
+    public function employees(BackendAuthorizedRequest $request, $companyId) {
+        return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId) {
+            return CompanyService::getCompanyEmployees($companyId);
+        });
+    }
+
+    public function createEmployee(CreateCompanyEmployeeRequest $request, $companyId) {
+        return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId) {
+            return CompanyService::createCompanyEmployee(
+                $request->locationId,
+                $request->firstName,
+                $request->lastName,
+                $request->hourlyWage,
+                $request->isAdmin,
+                $request->loginCode);
+        });
+    }
+
+    public function updateEmployee(CreateCompanyEmployeeRequest $request, $companyId, $employeeId) {
+        return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $employeeId) {
+            return CompanyService::updateCompanyEmployee(
+                $employeeId,
+                $request->locationId,
+                $request->firstName,
+                $request->lastName,
+                $request->hourlyWage,
+                $request->isAdmin,
+                $request->loginCode);
+        });
+    }
+
+    public function deleteEmployee(BackendAuthorizedRequest $request, $companyId, $employeeId) {
+        return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $employeeId) {
+            $employee = CompanyService::getCompanyEmployee($companyId, $employeeId);
+            $employee->delete();
         });
     }
 }

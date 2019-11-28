@@ -37,6 +37,7 @@ class Controller extends BaseController
             $funcReturn = $func();
             return $this->success($funcReturn);
         } catch (\Exception $e) {
+            \Log::error($e);
             return $this->failure($e->getMessage());
         }
     }
