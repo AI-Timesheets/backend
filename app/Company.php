@@ -18,6 +18,7 @@ class Company extends BaseModel {
         'name',
         'company_code',
         'owner_user_id',
+        'aws_collection_id'
     ];
 
     public function owner() {
