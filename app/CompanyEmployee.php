@@ -17,6 +17,7 @@ namespace App;
  * @property \App\Company $company;
  * @property \App\Location $location;
  * @property \App\Photo $photo;
+ * @property \App\EmployeeFaces $faces;
  * @property \App\ClockInLog[] $clockInLogs;
  */
 class CompanyEmployee extends BaseModel {
@@ -41,6 +42,10 @@ class CompanyEmployee extends BaseModel {
 
     public function photo() {
         return $this->belongsTo("\App\Photo");
+    }
+
+    public function faces() {
+        return $this->hasMany('\App\EmployeeFaces', 'company_employee_id');
     }
 
     public function clockInLogs() {
