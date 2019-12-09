@@ -12,6 +12,7 @@ namespace App;
  * @property string $email
  * @property string $password
  * @property \App\Company[] $companies;
+ * @property boolean $verified;
  */
 class User extends BaseModel
 {
@@ -20,6 +21,7 @@ class User extends BaseModel
         'last_name',
         'username',
         'email',
+        'verified',
     ];
 
     protected $hidden = [
@@ -33,5 +35,7 @@ class User extends BaseModel
     public function isOwnerOf(Company $company) {
         return $this->id === $company->owner_user_id;
     }
+
+
 
 }

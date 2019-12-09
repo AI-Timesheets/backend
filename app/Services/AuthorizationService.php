@@ -7,6 +7,7 @@ use App\Http\Controllers\BackendAuth;
 use App\Repositories\UserRepository;
 use App\User;
 use App\UserRecovery;
+use App\UserVerification;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
@@ -96,6 +97,10 @@ class AuthorizationService {
             throw new \Exception("Invalid Login Credentials");
         }
 
+        if (!$user->verified) {
+            throw new \Exception("Your account has not been verified yet. Please check your email.");
+        }
+
         return ['user' => $user, 'jwt' => AuthorizationService::getJWT(['user' => $user], $user->id)];
     }
 
@@ -125,6 +130,31 @@ class AuthorizationService {
         return $user;
     }
 
+    public static function createUserVerificationToken(User $user) {
+        $verification = new UserVerification();
+
+        $verification->user_id = $user->id;
+        $verification->verification_key = Random::stringWhereNot(32, function($key) {
+            UserVerification::where("verification_key", $key)->exists();
+        });
+        $verification->save();
+
+        return $verification;
+    }
+
+    public static function verifyUserKey($key) {
+        if (!$verification = UserVerification::where("verification_key", $key)->whereNull('verified_at')->first()) {
+            throw new \Exception("Invalid verification key.");
+        }
+
+        $verification->user->verified = true;
+        $verification->verified_at = date("Y-m-d H:i:s", time());
+        $verification->user->save();
+        $verification->save();
+
+        return ['user' => $verification->user, 'jwt' => AuthorizationService::getJWT(['user' => $verification->user], $verification->user->id)];
+    }
+
     public static function createUserRecoveryToken($email) {
         if (!$user = User::where("email", $email)->first()) {
             throw new \Exception("User does not exist");
@@ -134,7 +164,7 @@ class AuthorizationService {
 
         $userRecovery->user_id = $user->id;
         $userRecovery->expires_at = date("Y-m-d H:i:s", time() + self::RECOVERY_EXPIRATION_TIME);
-        $userRecovery->recovery_key = Random::stringWhereNot(32, function($key) { UserRepository::where("recovery_key",$key)->exists();});
+        $userRecovery->recovery_key = Random::stringWhereNot(32, function($key) { UserRecovery::where("recovery_key",$key)->exists();});
 
         $userRecovery->save();
 

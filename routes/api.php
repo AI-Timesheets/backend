@@ -18,6 +18,7 @@ Route::prefix("backend-auth")->group(function() {
     Route::get("self", "BackendAuth@self")->middleware("auth.backend");
     Route::post("register", "BackendAuth@register");
     Route::post("login", "BackendAuth@login");
+    Route::post("verify/{key}", "BackendAuth@verify");
     Route::post("recover", "BackendAuth@recover");
     Route::post("change-password", "BackendAuth@changePassword")->middleware("auth.backend");
     Route::post("change-password-recovery", "BackendAuth@changePasswordRecovery");

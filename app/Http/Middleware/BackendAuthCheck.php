@@ -24,7 +24,11 @@ class BackendAuthCheck
                 throw new Exception("Failed to authorize token");
             }
 
-            $user = User::where("id", $payload->toArray()[0]->user->id)->first();
+            $user = User::where("id", $payload->toArray()[0]->user->id)->where('verified', true)->first();
+
+            if (!$user) {
+                throw new \Exception("User does not exist or is not verified");
+            }
 
             $request->merge(['user' => $user]);
 
