@@ -12,24 +12,24 @@ class Controller extends BaseController
 {
     //use DispatchesJobs, ValidatesRequests;
 
-    protected function success($result) {
+    protected function success($result, $statusCode = 200) {
         if ($result) {
             return response()->json([
                 'success' => true,
                 'result' => $result,
-            ]);
+            ], $statusCode);
         } else {
             return response()->json([
                 'success' => true,
-            ]);
+            ], $statusCode);
         }
     }
 
-    protected function failure($error) {
+    protected function failure($error, $errorCode = 400) {
         return response()->json([
             'success' => false,
             'error' => $error,
-        ]);
+        ], $errorCode);
     }
 
     protected function handle($func) {
