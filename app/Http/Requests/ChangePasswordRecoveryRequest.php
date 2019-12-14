@@ -11,7 +11,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string $recoveryKey;
  * @propertt string $password;
  */
-class ChangePasswordRecoveryRequest extends FormRequest
+class ChangePasswordRecoveryRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

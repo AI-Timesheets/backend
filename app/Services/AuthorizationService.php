@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\CompanyEmployee;
 use App\Helpers\Random;
 use App\Http\Controllers\BackendAuth;
 use App\Repositories\UserRepository;
