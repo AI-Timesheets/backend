@@ -10,10 +10,6 @@ namespace App\Http\Requests;
  * @property string $locationName;
  */
 class CreateInitialCompanyRequest extends BackendAuthorizedRequest {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules() {
         return [
