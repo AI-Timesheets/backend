@@ -25,6 +25,9 @@ Route::prefix("backend-auth")->group(function() {
 });
 
 Route::prefix("company")->group(function() {
+    Route::post("initial", "CompanyController@createInitialCompany");
+    Route::get("initial", "CompanyController@hasInitialCompany")->middleware("auth.backend");
+
     Route::get("", "CompanyController@companies")->middleware("auth.backend");
     Route::post("", "CompanyController@createCompany")->middleware("auth.backend");
     Route::get("/{id}", "CompanyController@company")->middleware("auth.backend");

@@ -10,6 +10,7 @@ use App\Http\Requests\SignupRequest;
 use App\Mail\UserRecoveryEmail;
 use App\Mail\UserVerificationEmail;
 use App\Services\AuthorizationService;
+use App\Services\CompanyService;
 use App\User;
 use App\UserRecovery;
 use App\UserVerification;
