@@ -6,6 +6,7 @@ use App\CompanyEmployee;
 use App\Helpers\Random;
 use App\Http\Controllers\BackendAuth;
 use App\Repositories\UserRepository;
+use App\Company;
 use App\User;
 use App\UserRecovery;
 use App\UserVerification;
@@ -103,6 +104,21 @@ class AuthorizationService {
         }
 
         return ['user' => $user, 'jwt' => AuthorizationService::getJWT(['user' => $user], $user->id)];
+    }
+
+    public static function mobileLogin($companyCode) {
+
+        /** @var Company $company */
+        $company = Company::where("company_code", $companyCode)
+            ->first();
+
+        if (!$company) {
+            throw new \Exception("Invalid Login Credentials");
+        }
+
+        return [
+            'company' => $company,
+            'jwt' => AuthorizationService::getJWT(['company' => $company], $company->id)];
     }
 
     public static function register($firstName, $lastName, $username, $email, $password) {
