@@ -7,6 +7,7 @@ use App\CompanyEmployee;
 use App\Http\Requests\BackendAuthorizedRequest;
 use App\Http\Requests\CreateCompanyEmployeeRequest;
 use App\Http\Requests\CreateCompanyRequest;
+use App\Http\Requests\CreateInitialCompanyRequest;
 use App\Http\Requests\CreateLocationRequest;
 use App\Services\CompanyService;
 
@@ -26,6 +27,31 @@ class CompanyController extends Controller {
             }
 
             return $handleFn($company);
+        });
+    }
+
+    public function hasInitialCompany(BackendAuthorizedRequest $request) {
+        return $this->handle(function() use ($request) {
+
+            $companies = CompanyService::getUserCompanies($request->user);
+
+            if (count($companies) === 0) {
+                throw new \Exception("User has not registered company");
+            }
+
+            return $companies[0];
+        });
+    }
+
+    public function createInitialCompany(CreateInitialCompanyRequest $request) {
+        return $this->handle(function() use ($request) {
+           $company = CompanyService::createCompany($request->user, $request->companyName);
+           $location = CompanyService::createCompanyLocation($company, $request->locationName);
+
+           return [
+               'company' => $company,
+               'location' => $location,
+           ];
         });
     }
 
