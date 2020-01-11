@@ -8,7 +8,7 @@ namespace App\Http\Requests;
  *
  * @property string $name;
  */
-class CreateCompanyRequest extends BackendAuthorizedRequest
+class ClockInRequest extends BackendAuthorizedRequest
 {
     public function rules()
     {

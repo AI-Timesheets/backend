@@ -21,7 +21,7 @@ class BackendAuthCheck
             $payload = AuthorizationService::authenticateHeader($request);
 
             if (!$payload) {
-                throw new Exception("Failed to authorize token");
+                throw new \Exception("Failed to authorize token");
             }
 
             $user = User::where("id", $payload->toArray()[0]->user->id)->where('verified', true)->first();

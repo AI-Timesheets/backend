@@ -4,9 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Services\AuthorizationService;
 use Closure;
-use App\User;
+use App\Company;
 
-class BackendAuthCheck
+class MobileAuthCheck
 {
     /**
      * Handle an incoming request.
@@ -21,10 +21,10 @@ class BackendAuthCheck
             $payload = AuthorizationService::authenticateHeader($request);
 
             if (!$payload) {
-                throw new Exception("Failed to authorize token");
+                throw new \Exception("Failed to authorize token");
             }
 
-            $company = Company::where("company_code", $payload->toArray()[0]->company->company_code);
+            $company = \Company::where("company_code", $payload->toArray()[0]->company->company_code);
 
             if (!$company) {
                 throw new \Exception("Company does not exist");
