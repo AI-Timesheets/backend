@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Company;
 use App\CompanyEmployee;
 use App\Helpers\Random;
+use App\Helpers\Functions;
 use App\Location;
 use App\Repositories\CompanyEmployeeRepository;
 use App\Repositories\CompanyRepository;
@@ -66,16 +67,26 @@ class CompanyService {
         return $company;
     }
 
-    public static function createCompanyLocation(Company $company, $name) {
+    public static function createCompanyLocation(Company $company, $name, $country, $state, $city, $zipCode, $address) {
         $location = new Location();
         $location->company_id = $company->id;
         $location->name = $name;
+        $location->country = Functions::ifNull($country, "");
+        $location->state = Functions::ifNull($state, "");
+        $location->city = Functions::ifNull($city, "");
+        $location->zip_code = Functions::ifNull($zipCode, "");
+        $location->address = Functions::ifNull($address, "");
         $location->save();
         return $location;
     }
 
-    public static function updateCompanyLocation(Location $location, $name) {
+    public static function updateCompanyLocation(Location $location, $name, $country, $state, $city, $zipCode, $address) {
         $location->name = $name;
+        $location->country = Functions::ifNull($country, "");
+        $location->state = Functions::ifNull($state, "");
+        $location->city = Functions::ifNull($city, "");
+        $location->zip_code = Functions::ifNull($zipCode, "");
+        $location->address = Functions::ifNull($address, "");
         $location->save();
         return $location;
     }
