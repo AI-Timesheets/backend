@@ -14,6 +14,7 @@ namespace App;
  * @property int $company_id;
  * @property int $location_id;
  * @property int $photo_id;
+ * @property string $status;
  * @property \App\Company $company;
  * @property \App\Location $location;
  * @property \App\Photo $photo;
@@ -30,6 +31,7 @@ class CompanyEmployee extends BaseModel {
         'company_id',
         'location_id',
         'photo_id',
+        'status',
     ];
 
     public function company() {

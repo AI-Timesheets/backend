@@ -115,7 +115,7 @@ class CompanyController extends Controller {
     public function deleteLocation(BackendAuthorizedRequest $request, $companyId, $id) {
         return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $id) {
             $location = CompanyService::getCompanyLocation($companyId, $id);
-            $location->delete();
+            CompanyService::deleteLocation($location);
         });
     }
 
