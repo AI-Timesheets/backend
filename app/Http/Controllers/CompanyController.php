@@ -101,21 +101,21 @@ class CompanyController extends Controller {
 
     public function createLocation(CreateLocationRequest $request, $id) {
         return $this->handleIfOwner($request, $id, function($company) use ($request) {
-            return CompanyService::createCompanyLocation($company, $request->name);
+            return CompanyService::createCompanyLocation($company, $request->name, $request->country, $request->state, $request->city, $request->zipCode, $request->address);
         });
     }
 
     public function updateLocation(CreateLocationRequest $request, $companyId, $id) {
         return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $id) {
             $location = CompanyService::getCompanyLocation($companyId, $id);
-            return CompanyService::updateCompanyLocation($location, $request->name);
+            return CompanyService::updateCompanyLocation($location, $request->name, $request->country, $request->state, $request->city, $request->zipCode, $request->address);
         });
     }
 
     public function deleteLocation(BackendAuthorizedRequest $request, $companyId, $id) {
         return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $id) {
             $location = CompanyService::getCompanyLocation($companyId, $id);
-            $location->delete();
+            CompanyService::deleteLocation($location);
         });
     }
 

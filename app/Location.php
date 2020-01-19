@@ -11,11 +11,21 @@ namespace App;
  * @property \App\Company $company;
  * @property \App\CompanyEmployee[] $companyEmployees;
  * @property \App\ClockInLog[] $clockInLogs;
+ * @property string $country;
+ * @property string $state;
+ * @property string $city;
+ * @property string $zip_code;
+ * @property string $address;
  */
 class Location extends BaseModel {
     protected $fillable = [
         'name',
         'company_id',
+        'country',
+        'state',
+        'city',
+        'zip_code',
+        'address',
     ];
 
     public function company() {

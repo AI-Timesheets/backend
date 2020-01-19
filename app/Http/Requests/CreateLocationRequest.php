@@ -8,6 +8,11 @@ namespace App\Http\Requests;
  *
  * @property string $name;
  * @property int $companyId;
+ * @property string $country;
+ * @property string $state;
+ * @property string $city;
+ * @property string $zipCode;
+ * @property string $address;
  */
 class CreateLocationRequest extends BackendAuthorizedRequest
 {
@@ -21,6 +26,11 @@ class CreateLocationRequest extends BackendAuthorizedRequest
     {
         return [
             'name' => 'required',
+            'country' => 'nullable',
+            'state' => 'nullable',
+            'city' => 'nullable',
+            'zipCode' => 'nullable',
+            'address' => 'nullable',
         ];
     }
 }

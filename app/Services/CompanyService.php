@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Company;
 use App\CompanyEmployee;
 use App\Helpers\Random;
+use App\Helpers\Functions;
 use App\Location;
 use App\Repositories\CompanyEmployeeRepository;
 use App\Repositories\CompanyRepository;
@@ -14,11 +15,11 @@ use App\User;
 
 class CompanyService {
     public static function getUserCompanies(User $user) {
-        return Company::where("owner_user_id", $user->id)->get();
+        return Company::where("owner_user_id", $user->id)->with(['locations'])->get();
     }
 
     public static function getCompany($companyId): Company {
-        $company = Company::where("id", $companyId)->first();
+        $company = Company::where("id", $companyId)->with(['locations'])->first();
         if (!$company) {
             throw new \Exception("Company does not exist");
         }
@@ -38,11 +39,11 @@ class CompanyService {
     }
 
     public static function getCompanyEmployees($companyId) {
-        return CompanyEmployee::where("company_id", $companyId)->get();
+        return CompanyEmployee::where("company_id", $companyId)->with(['location', 'company'])->get();
     }
 
     public static function getCompanyEmployee($companyId, $employeeId) {
-        $employee = CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->first();
+        $employee = CompanyEmployee::where("id", $employeeId)->where("company_id", $companyId)->with(['location', 'company'])->first();
         if (!$employee) {
             throw new \Exception("Employee does not exist");
         }
@@ -57,6 +58,9 @@ class CompanyService {
             Company::where("company_code", $code)->exists();
         });
         $company->save();
+
+        CompanyService::createCompanyLocation($company, $company->name." HQ", null, null, null, null, null);
+
         return $company;
     }
 
@@ -66,16 +70,26 @@ class CompanyService {
         return $company;
     }
 
-    public static function createCompanyLocation(Company $company, $name) {
+    public static function createCompanyLocation(Company $company, $name, $country, $state, $city, $zipCode, $address) {
         $location = new Location();
         $location->company_id = $company->id;
         $location->name = $name;
+        $location->country = Functions::ifNull($country, "");
+        $location->state = Functions::ifNull($state, "");
+        $location->city = Functions::ifNull($city, "");
+        $location->zip_code = Functions::ifNull($zipCode, "");
+        $location->address = Functions::ifNull($address, "");
         $location->save();
         return $location;
     }
 
-    public static function updateCompanyLocation(Location $location, $name) {
+    public static function updateCompanyLocation(Location $location, $name, $country, $state, $city, $zipCode, $address) {
         $location->name = $name;
+        $location->country = Functions::ifNull($country, "");
+        $location->state = Functions::ifNull($state, "");
+        $location->city = Functions::ifNull($city, "");
+        $location->zip_code = Functions::ifNull($zipCode, "");
+        $location->address = Functions::ifNull($address, "");
         $location->save();
         return $location;
     }
@@ -100,6 +114,7 @@ class CompanyService {
         $employee->hourly_wage = $hourlyWage;
         $employee->is_admin = $isAdmin;
         $employee->login_code = $loginCode;
+        $employee->status = "ACTIVE";
         $employee->save();
         return $employee;
     }
@@ -128,6 +143,7 @@ class CompanyService {
         $employee->hourly_wage = $hourlyWage;
         $employee->is_admin = $isAdmin;
         $employee->login_code = $loginCode;
+        $employee->status = "ACTIVE";
         $employee->save();
         return $employee;
     }
@@ -142,5 +158,20 @@ class CompanyService {
         $employee->photo_id = null;
         $employee->save();
         return $employee;
+    }
+
+    public static function deleteLocation(Location $location) {
+        $locationCount = Location::where("company_id", $location->company_id)->count();
+
+        if ($locationCount === 1) {
+            throw new \Exception("Must have at least one location");
+        }
+
+        CompanyService::deactivateLocationEmployees($location);
+        $location->delete();
+    }
+
+    public static function deactivateLocationEmployees(Location $location) {
+        CompanyEmployee::where('location_id', $location->id)->update(['status' => 'INACTIVE']);
     }
 }
