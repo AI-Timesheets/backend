@@ -11,6 +11,7 @@ use App\User;
 use App\UserRecovery;
 use App\UserVerification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 use Tymon\JWTAuth\PayloadFactory;
@@ -50,7 +51,7 @@ class AuthorizationService {
             throw new \Exception("Token Expired");
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-
+            Log::debug('exception');
             throw new \Exception("Token Invalid");
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
@@ -107,7 +108,7 @@ class AuthorizationService {
     }
 
     public static function mobileLogin($companyCode) {
-
+        Log::error($companyCode);
         /** @var Company $company */
         $company = Company::where("company_code", $companyCode)
             ->first();

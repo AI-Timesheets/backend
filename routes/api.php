@@ -48,7 +48,8 @@ Route::prefix("company")->group(function() {
 });
 
 Route::prefix("mobile-auth")->group(function() {
-    Route::get("login", "MobileAuth@mobileLogin");
+    Route::post("login", "MobileAuth@mobileLogin");
+    Route::post("self", "MobileAuth@self")->middleware("auth.mobile");
 });
 
 Route::prefix("time-clock")->group(function() {

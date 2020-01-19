@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\AuthorizationService;
 use Closure;
 use App\Company;
+use Illuminate\Support\Facades\Log;
 
 class MobileAuthCheck
 {
@@ -24,7 +25,7 @@ class MobileAuthCheck
                 throw new \Exception("Failed to authorize token");
             }
 
-            $company = \Company::where("company_code", $payload->toArray()[0]->company->company_code);
+            $company = Company::where("id", $payload->toArray()[0]->company->id)->first();
 
             if (!$company) {
                 throw new \Exception("Company does not exist");

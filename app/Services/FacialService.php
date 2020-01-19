@@ -8,6 +8,9 @@ use Illuminate\Support\Arr;
 use App\Company;
 use App\Photo;
 use App\CompanyEmployee;
+use App\ClockInLog;
+
+use App\Services\CompanyService;
 use App\EmployeeFaces;
 use App\Services\ObjectDetectionService;
 
@@ -28,7 +31,7 @@ class FacialService extends RekognitionService {
    * @param App\CompanyEmployee $employee
    * @param App\Photo[] $photos
    */
-  public static function registerFace(CompanyEmployee $employee, $photos = []) : void {
+  public static function registerFace(CompanyEmployee $employee, Photo $photo) : EmployeeFaces {
     $company = $employee->company;
 
     $awsCollectionId = $company->aws_collection_id;
@@ -37,51 +40,38 @@ class FacialService extends RekognitionService {
       $awsCollectionId = self::createCompanyFaceCollection($company);
     }
 
-    // See if face exists already
-    foreach ($photos as $photo) {
-      try {
-        self::scanEmployeeFace($photo, $company);
-      } catch (\Exception $e) {
-        throw new \Exception('Face already registered');
-      }
+    try {
+      $response = self::indexFace($photo, $awsCollectionId);
+    } catch (RekognitionException $e) {
+      // Handle exception
+      throw $e;
     }
 
-    foreach ($photos as $photo) {
-      try {
-        $response = self::indexFace($photo, $awsCollectionId);
-      } catch (RekognitionException $e) {
-        // Handle exception
-        throw $e;
-      }
+    $faceId = Arr::first(
+      $response[self::AWS_FACE_RECORDS_KEY]
+    )[self::AWS_FACE_KEY][self::AWS_FACE_ID_KEY];
 
-      $faceId = Arr::first(
-        $response[self::AWS_FACE_RECORDS_KEY]
-      )[self::AWS_FACE_KEY][self::AWS_FACE_ID_KEY];
-
-      // Throw exception if multiple faces in the image
-      if (
-        count($response['FaceRecords']) !== 1 ||
-        in_array(
-          self::AWS_MAX_FACES_VALUE,
-          Arr::flatten($response[self::AWS_UNINDEXED_FACES_KEY])
-        )
-      ) {
-        self::deleteFace($faceId, $awsCollectionId);
-        throw new \Exception('Multiple faces detected. Image should only contain one face');
-      }
-
-      // Object detection test
-      if (ObjectDetectionService::photoContainsDevices($photo)) {
-        // TODO: Send buddy punch alert
-        throw new \Exception('Photo contains devices.');
-      }
-
-      // All good, register this face ID for this employee
-      EmployeeFaces::create([
-        'company_employee_id' => $employee->id,
-        'face_id' => $faceId
-      ]);
+    // Throw exception if multiple faces in the image
+    if (
+      count($response['FaceRecords']) !== 1 ||
+      in_array(
+        self::AWS_MAX_FACES_VALUE,
+        Arr::flatten($response[self::AWS_UNINDEXED_FACES_KEY])
+      )
+    ) {
+      self::deleteFace($faceId, $awsCollectionId);
+      throw new \Exception('Multiple faces detected. Image should only contain one face');
     }
+
+    // Save our Photo ID to the employee
+    $employee->photo_id = $photo->id;
+    $employee->save();
+
+    // All good, save this face ID for this employee
+    return EmployeeFaces::create([
+      'company_employee_id' => $employee->id,
+      'face_id' => $faceId
+    ]);
   }
 
   /**
@@ -98,7 +88,7 @@ class FacialService extends RekognitionService {
    */
   public static function scanEmployeeFace(Photo $photo, Company $company) : CompanyEmployee {
     if (! $company->aws_collection_id) {
-      throw new \Exception('AWS Collection ID required for collection search');
+      self::createCompanyFaceCollection($company);
     }
 
     $facial = self::rekognition()->searchFacesByImage([
@@ -120,15 +110,24 @@ class FacialService extends RekognitionService {
     $employees = EmployeeFaces::whereIn('face_id', $faceIds)
       ->groupBy('company_employee_id');
 
-    if ($employees->count() !== 1) {
+    if ($employees->count() === 0) {
+      // This is a new employee, create employee and register them.
+      $employee = new CompanyEmployee();
+      $employee->company_id = $company->id;
+      $employee->save();
+
+      self::registerFace($employee, $photo);
+    } elseif ($employees->count() === 1) {
+      $employee = $employees->first()->companyEmployee;
+    } else {
       throw new \Exception('Multiple employees detected');
     }
 
-    if (! $employees->first()) {
-      throw new \Exception('Face does not exist');
-    }
+    // Save Face ID to the Photo
+    $photo->face_id = last($faceIds);
+    $photo->save();
 
-    return $employees->first()->companyEmployee;
+    return $employee;
   }
 
   public static function createCompanyFaceCollection(Company $company) : string {

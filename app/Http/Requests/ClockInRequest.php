@@ -13,7 +13,7 @@ class ClockInRequest extends BackendAuthorizedRequest
     public function rules()
     {
         return [
-            'photos.*' => 'required|image',
+            // 'photos.*' => 'required|image',
         ];
     }
 }
