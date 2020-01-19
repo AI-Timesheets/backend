@@ -51,7 +51,6 @@ class AuthorizationService {
             throw new \Exception("Token Expired");
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            Log::debug('exception');
             throw new \Exception("Token Invalid");
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {

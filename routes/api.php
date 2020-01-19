@@ -55,5 +55,4 @@ Route::prefix("mobile-auth")->group(function() {
 Route::prefix("time-clock")->group(function() {
     Route::post("clock-in", "TimeclockController@clockIn")->middleware("auth.mobile");
     Route::get("clock-out", "TimeclockController@clockOut")->middleware("auth.mobile");
-    Route::get("status", "TimeclockController@status");
 });
