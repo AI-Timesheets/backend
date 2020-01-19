@@ -4,9 +4,10 @@ namespace App\Http\Middleware;
 
 use App\Services\AuthorizationService;
 use Closure;
-use App\User;
+use App\Company;
+use Illuminate\Support\Facades\Log;
 
-class BackendAuthCheck
+class MobileAuthCheck
 {
     /**
      * Handle an incoming request.
@@ -24,17 +25,14 @@ class BackendAuthCheck
                 throw new \Exception("Failed to authorize token");
             }
 
-            $user = User::where("id", $payload->toArray()[0]->user->id)->where('verified', true)->first();
+            $company = Company::where("id", $payload->toArray()[0]->company->id)->first();
 
-            if (!$user) {
-                throw new \Exception("User does not exist or is not verified");
+            if (!$company) {
+                throw new \Exception("Company does not exist");
             }
 
-            $request->merge(['user' => $user]);
+            $request->merge(['company' => $company]);
 
-            $request->setUserResolver(function () use ($user) {
-                return $user;
-            });
 
             return $next($request);
         } catch (\Exception $e) {

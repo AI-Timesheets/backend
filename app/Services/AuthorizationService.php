@@ -6,10 +6,12 @@ use App\CompanyEmployee;
 use App\Helpers\Random;
 use App\Http\Controllers\BackendAuth;
 use App\Repositories\UserRepository;
+use App\Company;
 use App\User;
 use App\UserRecovery;
 use App\UserVerification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 use Tymon\JWTAuth\PayloadFactory;
@@ -49,7 +51,6 @@ class AuthorizationService {
             throw new \Exception("Token Expired");
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-
             throw new \Exception("Token Invalid");
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
@@ -103,6 +104,21 @@ class AuthorizationService {
         }
 
         return ['user' => $user, 'jwt' => AuthorizationService::getJWT(['user' => $user], $user->id)];
+    }
+
+    public static function mobileLogin($companyCode) {
+        Log::error($companyCode);
+        /** @var Company $company */
+        $company = Company::where("company_code", $companyCode)
+            ->first();
+
+        if (!$company) {
+            throw new \Exception("Invalid Login Credentials");
+        }
+
+        return [
+            'company' => $company,
+            'jwt' => AuthorizationService::getJWT(['company' => $company], $company->id)];
     }
 
     public static function register($firstName, $lastName, $username, $email, $password) {
