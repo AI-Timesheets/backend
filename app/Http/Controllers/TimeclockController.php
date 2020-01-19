@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Photo;
 
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ClockInRequest;
+use App\Services\ClockInService;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 use App\Services\FacialService;
 use App\Services\ObjectDetectionService;
+use App\Services\PhotoService;
 
 class TimeclockController extends Controller {
 
@@ -21,13 +22,7 @@ class TimeclockController extends Controller {
 
           // TODO: get current time
 
-          foreach ($images as $image) {
-            // TODO: move this into PhotoService
-            $uuid = uniqid();
-            $filename = "{$uuid}.jpg";
-            Storage::disk('s3')->put($filename, base64_decode($image));
-            $photos[] = Photo::create(['file_name' => $filename]);
-          }
+          $photos = PhotoService::savePhotos($images);
 
           foreach ($photos as $photo) {
             if (ObjectDetectionService::photoContainsDevices($photo)) {
@@ -37,14 +32,9 @@ class TimeclockController extends Controller {
 
           Log::info('made it past object detection');
 
-          $employees = [];
-          foreach ($photos as $photo) {
-            $employees[] = FacialService::scanEmployeeFace($photo, $request->company);
-          }
+          $employee = ClockInService::runClockIn($photos, $request->company);
 
-          // TODO: create clock in log
-
-          return last($employees);
+          return $employee;
         });
     }
 

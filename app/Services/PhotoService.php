@@ -2,20 +2,22 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
-use App\Company;
 use App\Photo;
-use App\CompanyEmployee;
-use App\EmployeeFaces;
-use App\Services\ObjectDetectionService;
-
-use Aws\Rekognition\Exception\RekognitionException;
 
 class PhotoService {
 
-  public static function savePhotos($photos = []) : void {
-    //
+  public static function savePhotos($images = []) : array {
+    $photos = [];
+
+    foreach ($images as $image) {
+      $uuid = uniqid();
+      $filename = "{$uuid}.jpg";
+      Storage::disk('s3')->put($filename, base64_decode($image));
+      $photos[] = Photo::create(['file_name' => $filename]);
+    }
+
+    return $photos;
   }
 }
