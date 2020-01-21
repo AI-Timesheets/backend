@@ -107,6 +107,7 @@ class CompanyService {
        }
 
         $employee = new CompanyEmployee();
+        $employee->new_employee = false;
         $employee->company_id = $location->company_id;
         $employee->location_id = $locationId;
         $employee->first_name = $firstName;

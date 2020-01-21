@@ -110,11 +110,15 @@ class FacialService extends RekognitionService {
     $employees = EmployeeFaces::whereIn('face_id', $faceIds)
       ->groupBy('company_employee_id');
 
+    \Log::info($employees->count());
+
     if ($employees->count() === 0) {
       // This is a new employee, create employee and register them.
       $employee = new CompanyEmployee();
       $employee->company_id = $company->id;
       $employee->save();
+
+      \Log::info($employee);
 
       self::registerFace($employee, $photo);
     } elseif ($employees->count() === 1) {

@@ -49,10 +49,10 @@ Route::prefix("company")->group(function() {
 
 Route::prefix("mobile-auth")->group(function() {
     Route::post("login", "MobileAuth@mobileLogin");
-    Route::post("self", "MobileAuth@self")->middleware("auth.mobile");
+    Route::get("self", "MobileAuth@self")->middleware("auth.mobile");
 });
 
 Route::prefix("time-clock")->group(function() {
     Route::post("clock-in", "TimeclockController@clockIn")->middleware("auth.mobile");
-    Route::get("clock-out", "TimeclockController@clockOut")->middleware("auth.mobile");
+    Route::post("clock-out", "TimeclockController@clockOut")->middleware("auth.mobile");
 });

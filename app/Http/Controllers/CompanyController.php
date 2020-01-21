@@ -46,7 +46,7 @@ class CompanyController extends Controller {
     public function createInitialCompany(CreateInitialCompanyRequest $request) {
         return $this->handle(function() use ($request) {
            $company = CompanyService::createCompany($request->user, $request->companyName);
-           $location = CompanyService::createCompanyLocation($company, $request->locationName);
+           $location = CompanyService::createCompanyLocation($company, $request->locationName, null, null, null, null, null);
 
            return [
                'company' => $company,

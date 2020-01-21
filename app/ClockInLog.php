@@ -12,7 +12,8 @@ namespace App;
  * @property int $photo_id;
  * @property int $location_id;
  * @property \App\CompanyEmployee $companyEmployee;
- * @property \App\Photo $photo;
+ * @property \App\Photo $clock_in_photo;
+ * @property \App\Photo $clock_out_photo;
  * @property \App\Location $location;
  */
 class ClockInLog extends BaseModel {
@@ -20,7 +21,8 @@ class ClockInLog extends BaseModel {
         'clockin_timestamp',
         'clockout_timestamp',
         'company_employee_id',
-        'photo_id',
+        'clock_in_photo_id',
+        'clock_out_photo_id',
         'location_id',
     ];
 
@@ -28,7 +30,11 @@ class ClockInLog extends BaseModel {
         return $this->belongsTo("\App\CompanyEmployee");
     }
 
-    public function photo() {
+    public function clock_in_photo() {
+        return $this->belongsTo("\App\Photo");
+    }
+
+    public function clock_out_photo() {
         return $this->belongsTo("\App\Photo");
     }
 

@@ -30,11 +30,34 @@ class TimeclockController extends Controller {
             }
           }
 
-          Log::info('made it past object detection');
+          \Log::info('made it past object detection');
 
           $employee = ClockInService::runClockIn($photos, $request->company);
 
           return $employee;
+        });
+    }
+
+    public function clockOut(Request $request) {
+        return $this->handle(function() use ($request) {
+            $images = $request->photos;
+            $photos = [];
+
+            // TODO: get current time
+
+            $photos = PhotoService::savePhotos($images);
+
+            foreach ($photos as $photo) {
+                if (ObjectDetectionService::photoContainsDevices($photo)) {
+                    throw new \Exception('Device detected');
+                }
+            }
+
+            \Log::info('made it past object detection');
+
+            $employee = ClockInService::runClockOut($photos, $request->company);
+
+            return $employee;
         });
     }
 

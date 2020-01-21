@@ -20,6 +20,7 @@ namespace App;
  * @property \App\Photo $photo;
  * @property \App\EmployeeFaces $faces;
  * @property \App\ClockInLog[] $clockInLogs;
+ * @property boolean $new_employee;
  */
 class CompanyEmployee extends BaseModel {
     protected $fillable = [
