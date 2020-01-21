@@ -47,6 +47,10 @@ Route::prefix("company")->group(function() {
     Route::delete("/{id}/employee/{employeeId}", "CompanyController@deleteEmployee")->middleware("auth.backend");
 });
 
+Route::prefix("photo")->group(function() {
+    Route::get("/{fileName}", "PhotoController@getPhoto")->middleware("auth.backend");
+});
+
 Route::prefix("mobile-auth")->group(function() {
     Route::post("login", "MobileAuth@mobileLogin");
     Route::get("self", "MobileAuth@self")->middleware("auth.mobile");

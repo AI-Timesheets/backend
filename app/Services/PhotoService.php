@@ -20,4 +20,8 @@ class PhotoService {
 
     return $photos;
   }
+
+  public static function getPhoto($fileName) {
+      return Storage::disk('s3')->temporaryUrl($fileName, now()->addMinutes(5), []);
+  }
 }

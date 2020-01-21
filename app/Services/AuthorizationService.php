@@ -44,7 +44,6 @@ class AuthorizationService {
     private static function validateJWT($jwt) {
         try {
             $token = JWTAuth::setToken($jwt)->getToken();
-            \Log::info($token);
             $payload = JWTAuth::decode($token);
             return $payload;
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {

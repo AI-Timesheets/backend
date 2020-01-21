@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Services\PhotoService;
+
 /**
  * Class Photo
  * @package App
@@ -14,4 +16,12 @@ class Photo extends BaseModel {
         'file_name',
         'face_id'
     ];
+
+    protected $appends = [
+        'url',
+    ];
+
+    public function url() {
+        return PhotoService::getPhoto($this->file_name);
+    }
 }
