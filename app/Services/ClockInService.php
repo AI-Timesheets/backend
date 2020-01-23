@@ -62,10 +62,14 @@ class ClockInService {
     public static function runClockIn($photos, Company $company) {
         $employee = self::getEmployee($photos, $company);
         self::clockIn($employee, $photos[0]);
+
+        return $employee;
     }
 
     public static function runClockOut($photos, Company $company) {
         $employee = self::getEmployee($photos, $company);
         self::clockOut($employee, $photos[0]);
+
+        return $employee;
     }
 }
