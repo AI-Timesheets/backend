@@ -35,6 +35,8 @@ class CompanyEmployee extends BaseModel {
         'status',
     ];
 
+    protected $with = ['latestClockIn'];
+
     public function company() {
         return $this->belongsTo("\App\Company");
     }
@@ -53,5 +55,9 @@ class CompanyEmployee extends BaseModel {
 
     public function clockInLogs() {
         return $this->hasMany("\App\ClockInLog");
+    }
+
+    public function latestClockIn() {
+        return $this->clockInLogs()->orderBy('created_at', 'desc')->take(1);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Photo;
+use App\CompanyEmployee;
 
 use App\Http\Requests\ClockInRequest;
 use App\Services\ClockInService;
@@ -30,11 +31,9 @@ class TimeclockController extends Controller {
             }
           }
 
-          \Log::info('made it past object detection');
-
           $employee = ClockInService::runClockIn($photos, $request->company);
 
-          return $employee;
+          return $employee->refresh();
         });
     }
 
@@ -53,11 +52,9 @@ class TimeclockController extends Controller {
                 }
             }
 
-            \Log::info('made it past object detection');
-
             $employee = ClockInService::runClockOut($photos, $request->company);
 
-            return $employee;
+            return $employee->refresh();
         });
     }
 
