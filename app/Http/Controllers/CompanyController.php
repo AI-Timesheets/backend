@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ClockInLog;
 use App\Company;
 use App\CompanyEmployee;
 use App\Http\Requests\BackendAuthorizedRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\CreateCompanyEmployeeRequest;
 use App\Http\Requests\CreateCompanyRequest;
 use App\Http\Requests\CreateInitialCompanyRequest;
 use App\Http\Requests\CreateLocationRequest;
+use App\Services\ClockInService;
 use App\Services\CompanyService;
 
 class CompanyController extends Controller {
@@ -16,7 +18,7 @@ class CompanyController extends Controller {
     private function handleIfOwner(BackendAuthorizedRequest $request, $companyId, $handleFn) {
         return $this->handle(function() use ($request, $companyId, $handleFn) {
 
-            $company = Company::find($companyId);
+            $company = Company::where("id", $companyId)->with(['locations'])->first();
 
             if (!$company) {
                 throw new \Exception("Company does not exist");
@@ -160,6 +162,22 @@ class CompanyController extends Controller {
         return $this->handleIfOwner($request, $companyId, function() use ($request, $companyId, $employeeId) {
             $employee = CompanyService::getCompanyEmployee($companyId, $employeeId);
             $employee->delete();
+        });
+    }
+
+    public function timeclockLogs(BackendAuthorizedRequest $request, $companyId) {
+        return $this->handleIfOwner($request, $companyId, function(Company $company) {
+            $locationIds = [];
+
+            foreach ($company->locations as $location) {
+                $locationIds[] = $location->id;
+            }
+
+            return ClockInLog::whereIn("location_id", $locationIds)
+                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
+                ->where("status", ClockInService::SUCCESS)
+                ->orderBy("timestamp", "DESC")
+                ->get();
         });
     }
 }

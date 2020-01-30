@@ -21,7 +21,7 @@ class Photo extends BaseModel {
         'url',
     ];
 
-    public function url() {
+    public function getUrlAttribute() {
         return PhotoService::getPhoto($this->file_name);
     }
 }

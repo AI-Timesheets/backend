@@ -6,14 +6,17 @@ namespace App\Http\Requests;
  * Class CreateCompanyRequest
  * @package App\Http\Requests
  *
- * @property string $name;
+ * @property int $companyId;
+ * @property string $loginCode;
+ * @property string $photoId;
  */
-class ClockInRequest extends BackendAuthorizedRequest
+class ClockInRequest extends MobileAuthorizedRequest
 {
     public function rules()
     {
         return [
-            // 'photos.*' => 'required|image',
+            'loginCode' => 'required',
+            'photoId' => 'nullable',
         ];
     }
 }

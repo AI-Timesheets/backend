@@ -45,6 +45,8 @@ Route::prefix("company")->group(function() {
     Route::get("/{id}/employee/{employeeId}", "CompanyController@employee")->middleware("auth.backend");
     Route::put("/{id}/employee/{employeeId}", "CompanyController@updateEmployee")->middleware("auth.backend");
     Route::delete("/{id}/employee/{employeeId}", "CompanyController@deleteEmployee")->middleware("auth.backend");
+
+    Route::get("/{id}/timeclock-logs", "CompanyController@timeclockLogs")->middleware("auth.backend");
 });
 
 Route::prefix("photo")->group(function() {
@@ -57,6 +59,8 @@ Route::prefix("mobile-auth")->group(function() {
 });
 
 Route::prefix("time-clock")->group(function() {
+    Route::post("recognize", "TimeclockController@recognize")->middleware("auth.mobile");
+    Route::post("status", "TimeclockController@status")->middleware("auth.mobile");
     Route::post("clock-in", "TimeclockController@clockIn")->middleware("auth.mobile");
     Route::post("clock-out", "TimeclockController@clockOut")->middleware("auth.mobile");
 });
