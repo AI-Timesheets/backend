@@ -180,4 +180,22 @@ class CompanyController extends Controller {
                 ->get();
         });
     }
+
+    public function clockedInEmployees(BackendAuthorizedRequest $request, $companyId) {
+        return $this->handleIfOwner($request, $companyId, function(Company $company) {
+            $locationIds = [];
+
+            foreach ($company->locations as $location) {
+                $locationIds[] = $location->id;
+            }
+
+            return ClockInLog::whereIn("location_id", $locationIds)
+                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
+                ->where("status", ClockInService::SUCCESS)
+                ->where("type", ClockInService::CLOCKED_IN)
+                ->whereNull("clock_out_id")
+                ->orderBy("timestamp", "DESC")
+                ->get();
+        });
+    }
 }

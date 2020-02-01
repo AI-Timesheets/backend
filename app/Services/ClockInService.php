@@ -52,7 +52,7 @@ class ClockInService {
         $clockIn = new ClockInLog();
         $clockIn->location_id = $employee->location_id;
         $clockIn->company_employee_id = $employee->id;
-        $clockIn->timestamp = Functions::timestamp();
+        $clockIn->timestamp = Functions::ISOTimestamp();
         $clockIn->type = $type;
         $clockIn->method = $method;
         $clockIn->status = self::PENDING;
