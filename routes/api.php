@@ -65,3 +65,7 @@ Route::prefix("time-clock")->group(function() {
     Route::post("clock-in", "TimeclockController@clockIn")->middleware("auth.mobile");
     Route::post("clock-out", "TimeclockController@clockOut")->middleware("auth.mobile");
 });
+
+Route::prefix("export")->group(function() {
+    Route::post("timesheet", "ExportController@exportTimesheet")->middleware("auth.backend");
+});

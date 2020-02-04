@@ -50,6 +50,13 @@ class CompanyService {
         return $employee;
     }
 
+    public static function getCompanyLocationEmployees($companyId, $locationId) {
+        return CompanyEmployee::where("company_id", $companyId)
+            ->where('location_id', $locationId)
+            ->with(['location', 'company'])
+            ->get();
+    }
+
     public static function createCompany(User $user, $name) {
         $company = new Company();
         $company->name = $name;

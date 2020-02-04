@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "ext-gd": "*",
+        "ext-iconv": "*",
         "aws/aws-sdk-php": "3.*",
         "barryvdh/laravel-cors": "^0.11.4",
         "doctrine/dbal": "^2.10",
@@ -16,6 +18,8 @@
         "laravel/framework": "^6.2",
         "laravel/tinker": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.10",
         "tymon/jwt-auth": "^1.0.0"
     },
     "require-dev": {

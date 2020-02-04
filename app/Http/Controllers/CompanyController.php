@@ -15,23 +15,6 @@ use App\Services\CompanyService;
 
 class CompanyController extends Controller {
 
-    private function handleIfOwner(BackendAuthorizedRequest $request, $companyId, $handleFn) {
-        return $this->handle(function() use ($request, $companyId, $handleFn) {
-
-            $company = Company::where("id", $companyId)->with(['locations'])->first();
-
-            if (!$company) {
-                throw new \Exception("Company does not exist");
-            }
-
-            if (!$request->user->isOwnerOf($company)) {
-                throw new \Exception("User is not owner of company");
-            }
-
-            return $handleFn($company);
-        });
-    }
-
     public function hasInitialCompany(BackendAuthorizedRequest $request) {
         return $this->handle(function() use ($request) {
 

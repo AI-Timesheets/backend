@@ -21,6 +21,29 @@ class ClockInService {
     const SUCCESS = "SUCCESS";
     const FAILED = "FAILED";
 
+    public static function getClockInLogs($startDate, $endDate, $company, $locationId = null) {
+        $locationIds = [];
+        if ($locationId === null) {
+            foreach ($company->locations as $location) {
+                $locationIds[] = $location->id;
+            }
+        } else {
+            $locationIds = [$locationId];
+        }
+
+        $query = ClockInLog::whereIn("location_id", $locationIds)
+            ->with(['clockOut', 'location', 'companyEmployee'])
+            ->where('type', self::CLOCKED_IN)
+            ->where('status', self::SUCCESS)
+            ->where('timestamp', '>=', $startDate)
+            ->where('updated_at', '<=', $endDate)
+            ->orderBy('timestamp', 'ASC');
+
+        \Log::info($query->toSql());
+
+        return $query->get();
+    }
+
     private static function getLastClockIn($employee):? ClockInLog{
         return ClockInLog::where("company_employee_id", $employee->id)
             ->with(["clockOut", "clockIn"])
