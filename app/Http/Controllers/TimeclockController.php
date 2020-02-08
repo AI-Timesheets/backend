@@ -32,7 +32,7 @@ class TimeclockController extends Controller {
             };
             $employee = ClockInService::getEmployeeViaPhotos($photos, $request->company);
 
-            return $employee;
+            return ['employee' => $employee, 'photos' => $photos];
         });
     }
 
