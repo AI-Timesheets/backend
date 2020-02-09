@@ -35,7 +35,7 @@ class CompanyEmployee extends BaseModel {
         'status',
     ];
 
-    protected $with = ['latestClockIn'];
+    protected $with = ['latestClockIn', 'photo'];
 
     public function company() {
         return $this->belongsTo("\App\Company");

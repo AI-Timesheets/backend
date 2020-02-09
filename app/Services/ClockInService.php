@@ -165,11 +165,13 @@ class ClockInService {
             return [
                 'status' => self::CLOCKED_IN,
                 'clockIn' => $clockIn,
+                'employee' => $employee,
             ];
         } else {
             return [
                 'status' => self::CLOCKED_OUT,
                 'clockIn' => $clockIn,
+                'employee' => $employee,
             ];
         }
     }
