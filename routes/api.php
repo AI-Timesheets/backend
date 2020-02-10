@@ -47,7 +47,7 @@ Route::prefix("company")->group(function() {
     Route::delete("/{id}/employee/{employeeId}", "CompanyController@deleteEmployee")->middleware("auth.backend");
 
     Route::get("/{id}/timeclock-logs", "CompanyController@timeclockLogs")->middleware("auth.backend");
-    Route::get("/{id}/clocked-in-employees", "CompanyController@clockedInEmployees")->middleware("auth.backend");
+    Route::get("/{id}/clocked-in-employees", "CompanyController@clockedInEmployees")->middleware("auth");
 });
 
 Route::prefix("photo")->group(function() {

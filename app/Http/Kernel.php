@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\BackendAuthCheck;
 use App\Http\Middleware\MobileAuthCheck;
+use App\Http\Middleware\AuthCheck;
 use App\Http\Middleware\SetTimerMiddleware;
 use App\Http\Middleware\AppendDurationMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -60,6 +61,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth.backend' => BackendAuthCheck::class,
         'auth.mobile' => MobileAuthCheck::class,
+        'auth' => AuthCheck::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
