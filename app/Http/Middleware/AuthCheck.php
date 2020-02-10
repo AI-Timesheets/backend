@@ -18,15 +18,17 @@ class AuthCheck
      */
     public function handle($request, Closure $next)
     {
+        Log::debug('here');
         try {
             $payload = AuthorizationService::authenticateHeader($request);
-
+            Log::debug($payload);
             if (!$payload) {
                 throw new \Exception("Failed to authorize token");
             }
 
             return $next($request);
         } catch (\Exception $e) {
+            Log::debug($e);
             abort(403, $e->getMessage());
         }
     }

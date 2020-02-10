@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\ClockInLog;
 use App\Company;
 use App\CompanyEmployee;
@@ -164,21 +165,21 @@ class CompanyController extends Controller {
         });
     }
 
-    public function clockedInEmployees(BackendAuthorizedRequest $request, $companyId) {
-        return $this->handleIfOwner($request, $companyId, function(Company $company) {
-            $locationIds = [];
+    public function clockedInEmployees(Request $request, $companyId) {
+        $company = Company::where("id", $companyId)->first();
 
-            foreach ($company->locations as $location) {
-                $locationIds[] = $location->id;
-            }
+        $locationIds = [];
 
-            return ClockInLog::whereIn("location_id", $locationIds)
-                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
-                ->where("status", ClockInService::SUCCESS)
-                ->where("type", ClockInService::CLOCKED_IN)
-                ->whereNull("clock_out_id")
-                ->orderBy("timestamp", "DESC")
-                ->get();
-        });
+        foreach ($company->locations as $location) {
+            $locationIds[] = $location->id;
+        }
+
+        return ClockInLog::whereIn("location_id", $locationIds)
+            ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
+            ->where("status", ClockInService::SUCCESS)
+            ->where("type", ClockInService::CLOCKED_IN)
+            ->whereNull("clock_out_id")
+            ->orderBy("timestamp", "DESC")
+            ->get();
     }
 }
