@@ -32,6 +32,8 @@ class ClockInLog extends BaseModel {
         'type',
         'clock_in_id',
         'clock_out_id',
+        'latitude',
+        'longitude',
         'method',
         'status',
         'error',
