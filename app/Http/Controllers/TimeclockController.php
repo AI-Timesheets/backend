@@ -49,9 +49,9 @@ class TimeclockController extends Controller {
             $employee = ClockInService::getEmployeeViaLoginCode($request->loginCode, $request->company);
 
             if ($request->photoId) {
-                return ClockInService::clockInWithPhoto($employee, $request->photoId);
+                return ClockInService::clockInWithPhoto($employee, $request->photoId, $request->latitude, $request->longitude);
             } else {
-                return ClockInService::clockIn($employee);
+                return ClockInService::clockIn($employee, $request->latitude, $request->longitude);
             }
         });
     }
@@ -61,9 +61,9 @@ class TimeclockController extends Controller {
             $employee = ClockInService::getEmployeeViaLoginCode($request->loginCode, $request->company);
 
             if ($request->photoId) {
-                return ClockInService::clockOutWithPhoto($employee, $request->photoId);
+                return ClockInService::clockOutWithPhoto($employee, $request->photoId, $request->latitude, $request->longitude);
             } else {
-                return ClockInService::clockOut($employee);
+                return ClockInService::clockOut($employee, $request->latitude, $request->longitude);
             }
         });
     }

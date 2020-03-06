@@ -62,7 +62,7 @@ class ClockInService {
         return $method === self::PHOTO_METHOD || $method === self::CODE_METHOD;
     }
 
-    public static function newClockInLog(CompanyEmployee $employee, $type, $method, $photoId = null) {
+    public static function newClockInLog(CompanyEmployee $employee, $type, $method, $latitude, $longitude, $photoId = null) {
 
         if (!self::validType($type)) {
             throw new \Exception("Invalid Type: ".$type);
@@ -72,10 +72,13 @@ class ClockInService {
             throw new \Exception("Invalid method: ".$method);
         }
 
+        $geographicLocation = GeolocationService::GetGeolocationByCoordinates($latitude, $longitude);
+
         $clockIn = new ClockInLog();
         $clockIn->location_id = $employee->location_id;
         $clockIn->company_employee_id = $employee->id;
         $clockIn->timestamp = Functions::ISOTimestamp();
+        $clockIn->geographic_location_id = $geographicLocation->id;
         $clockIn->type = $type;
         $clockIn->method = $method;
         $clockIn->status = self::PENDING;
@@ -176,23 +179,23 @@ class ClockInService {
         }
     }
 
-    public static function clockInWithPhoto($employee, $photoId) {
-        $clockIn = self::newClockInLog($employee, self::CLOCKED_IN, self::PHOTO_METHOD, $photoId);
+    public static function clockInWithPhoto($employee, $photoId, $lat, $long) {
+        $clockIn = self::newClockInLog($employee, self::CLOCKED_IN, self::PHOTO_METHOD, $lat, $long, $photoId);
         return self::tryClockIn($employee, $clockIn);
     }
 
-    public static function clockIn($employee) {
-        $clockIn = self::newClockInLog($employee, self::CLOCKED_IN, self::CODE_METHOD);
+    public static function clockIn($employee, $lat, $long) {
+        $clockIn = self::newClockInLog($employee, self::CLOCKED_IN, self::CODE_METHOD, $lat, $long);
         return self::tryClockIn($employee, $clockIn);
     }
 
-    public static function clockOutWithPhoto($employee, $photoId) {
-        $clockOut = self::newClockInLog($employee, self::CLOCKED_OUT, self::PHOTO_METHOD, $photoId);
+    public static function clockOutWithPhoto($employee, $photoId, $lat, $long) {
+        $clockOut = self::newClockInLog($employee, self::CLOCKED_OUT, self::PHOTO_METHOD, $lat, $long, $photoId);
         return self::tryClockOut($employee, $clockOut);
     }
 
-    public static function clockOut($employee) {
-        $clockOut = self::newClockInLog($employee, self::CLOCKED_OUT, self::CODE_METHOD);
+    public static function clockOut($employee, $lat, $long) {
+        $clockOut = self::newClockInLog($employee, self::CLOCKED_OUT, self::CODE_METHOD, $lat, $long);
         return self::tryClockOut($employee, $clockOut);
     }
 

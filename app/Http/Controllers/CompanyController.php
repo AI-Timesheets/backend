@@ -158,7 +158,7 @@ class CompanyController extends Controller {
             }
 
             return ClockInLog::whereIn("location_id", $locationIds)
-                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
+                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut', 'geographicLocation'])
                 ->where("status", ClockInService::SUCCESS)
                 ->orderBy("timestamp", "DESC")
                 ->get();
@@ -166,20 +166,22 @@ class CompanyController extends Controller {
     }
 
     public function clockedInEmployees(Request $request, $companyId) {
-        $company = Company::where("id", $companyId)->first();
+        return $this->handle(function() use ($request, $companyId) {
+            $company = Company::findOrFail($companyId);
 
-        $locationIds = [];
+            $locationIds = [];
 
-        foreach ($company->locations as $location) {
-            $locationIds[] = $location->id;
-        }
+            foreach ($company->locations as $location) {
+                $locationIds[] = $location->id;
+            }
 
-        return ClockInLog::whereIn("location_id", $locationIds)
-            ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
-            ->where("status", ClockInService::SUCCESS)
-            ->where("type", ClockInService::CLOCKED_IN)
-            ->whereNull("clock_out_id")
-            ->orderBy("timestamp", "DESC")
-            ->get();
+            return ClockInLog::whereIn("location_id", $locationIds)
+                ->with(['companyEmployee', 'photo', 'photo', 'location', 'clockIn', 'clockOut'])
+                ->where("status", ClockInService::SUCCESS)
+                ->where("type", ClockInService::CLOCKED_IN)
+                ->whereNull("clock_out_id")
+                ->orderBy("timestamp", "DESC")
+                ->get();
+        });
     }
 }
