@@ -79,10 +79,13 @@ class ClockInService {
             throw new \Exception("Invalid method: ".$method);
         }
 
+        $geographicLocation = GeolocationService::GetGeolocationByCoordinates($latitude, $longitude);
+
         $clockIn = new ClockInLog();
         $clockIn->location_id = $employee->location_id;
         $clockIn->company_employee_id = $employee->id;
         $clockIn->timestamp = Functions::ISOTimestamp();
+        $clockIn->geographic_location_id = $geographicLocation->id;
         $clockIn->type = $type;
         $clockIn->latitude = $latitude;
         $clockIn->longitude = $longitude;

@@ -67,5 +67,6 @@ Route::prefix("time-clock")->group(function() {
 });
 
 Route::prefix("export")->group(function() {
+    Route::post("timesheet-to-excel", "ExportController@exportTimesheetToExcel")->middleware("auth.backend");
     Route::post("timesheet", "ExportController@exportTimesheet")->middleware("auth.backend");
 });

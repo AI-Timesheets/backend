@@ -9,6 +9,8 @@ namespace App\Http\Requests;
  * @property int $companyId;
  * @property string $loginCode;
  * @property string $photoId;
+ * @property float $latitude;
+ * @property float $longitude;
  */
 class ClockInRequest extends MobileAuthorizedRequest
 {
@@ -17,6 +19,8 @@ class ClockInRequest extends MobileAuthorizedRequest
         return [
             'loginCode' => 'required',
             'photoId' => 'nullable',
+            'latitude' => 'required',
+            'longitude' => 'required',
         ];
     }
 }

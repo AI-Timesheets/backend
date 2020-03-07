@@ -71,7 +71,7 @@ class TimeclockController extends Controller {
             );
 
             if ($request->photoId) {
-                return ClockInService::clockOutWithPhoto($employee, $request->photoId);
+                return ClockInService::clockOutWithPhoto($employee, $request->photoId, $request->latitude, $request->longitude);
             } else {
                 return ClockInService::clockOut($employee, $request->latitude, $request->longitude);
             }

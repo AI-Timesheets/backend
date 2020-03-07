@@ -13,6 +13,7 @@ use App\Services\ClockInService;
  * @property int $photo_id;
  * @property int $location_id;
  * @property string $type;
+ * @property \App\GeographicLocation $geographicLocation;
  * @property int $clock_in_id;
  * @property string $method;
  * @property string $status;
@@ -37,6 +38,7 @@ class ClockInLog extends BaseModel {
         'method',
         'status',
         'error',
+        'geographic_location_id',
     ];
 
     public function companyEmployee() {
@@ -57,5 +59,9 @@ class ClockInLog extends BaseModel {
 
     public function clockOut() {
         return $this->hasOne("\App\ClockInLog", "clock_in_id");
+    }
+
+    public function geographicLocation() {
+        return $this->belongsTo("\App\GeographicLocation");
     }
 }
