@@ -8,6 +8,7 @@ use App\CompanyEmployee;
 use App\Helpers\Functions;
 use App\Photo;
 use App\Services\FacialService;
+use Illuminate\Support\Facades\Log;
 
 class ClockInService {
 
@@ -78,7 +79,6 @@ class ClockInService {
         if (!self::validMethod($method)) {
             throw new \Exception("Invalid method: ".$method);
         }
-
         $geographicLocation = GeolocationService::GetGeolocationByCoordinates($latitude, $longitude);
 
         $clockIn = new ClockInLog();
@@ -87,8 +87,6 @@ class ClockInService {
         $clockIn->timestamp = Functions::ISOTimestamp();
         $clockIn->geographic_location_id = $geographicLocation->id;
         $clockIn->type = $type;
-        $clockIn->latitude = $latitude;
-        $clockIn->longitude = $longitude;
         $clockIn->method = $method;
         $clockIn->status = self::PENDING;
 
@@ -193,9 +191,9 @@ class ClockInService {
             $employee,
             self::CLOCKED_IN,
             self::PHOTO_METHOD,
-            $photoId,
             $latitude,
-            $longitude
+            $longitude,
+            $photoId
         );
         return self::tryClockIn($employee, $clockIn);
     }
@@ -216,9 +214,9 @@ class ClockInService {
             $employee,
             self::CLOCKED_OUT,
             self::PHOTO_METHOD,
-            $photoId,
             $latitude,
-            $longitude
+            $longitude,
+            $photoId
         );
         return self::tryClockOut($employee, $clockOut);
     }

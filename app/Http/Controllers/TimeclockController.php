@@ -9,6 +9,7 @@ use App\Photo;
 use App\CompanyEmployee;
 
 use App\Http\Requests\ClockInRequest;
+use App\Http\Requests\ClockInStatusRequest;
 use App\Services\ClockInService;
 use App\Services\CompanyService;
 use \Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class TimeclockController extends Controller {
         });
     }
 
-    public function status(ClockInRequest $request) {
+    public function status(ClockInStatusRequest $request) {
         return $this->handle(function() use ($request) {
             $employee = ClockInService::getEmployeeViaLoginCode($request->loginCode, $request->company);
 
