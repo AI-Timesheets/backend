@@ -18,6 +18,12 @@ return [
 
     'driver' => env('MAIL_DRIVER', 'smtp'),
 
+    'ses' => [
+        'key' => env('SES_KEY'),
+        'secret' => env('SES_SECRET'),
+        'region' => 'us-east-1',  // e.g. us-east-1
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | SMTP Host Address
